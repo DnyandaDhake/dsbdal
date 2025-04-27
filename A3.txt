@@ -1,0 +1,25 @@
+import pandas as pd
+data={'Age_Group':['18-24','18-24','25-34','35-44','18-24','45+','45+','25-34','35-44'],
+      'Income':[30000,34000,45000,65000,30000,80000,70000,42000,62000]
+      }
+df=pd.DataFrame(data)
+group_stats=df.groupby('Age_Group')['Income'].agg(mean='mean',median='median',min='min',max='max',std_dev='std')
+print(group_stats)
+print("Column Names:", df.columns)
+# mode_age = df['age'].mode()
+mode_income = df['Income'].mode()
+# print(f"Mode of Age: {mode_age.values}")
+print(f"Mode of Income: {mode_income.values}")
+
+df = pd.read_csv(r'C:\Users\admin\Desktop\Iris.csv')
+species_to_analyze=['Iris-setosa','Iris-virginica','Iris-versicolor']
+df_filtered=df[df['Species'].isin(species_to_analyze)]
+species_group=df_filtered.groupby('Species')
+for species,group in species_group:
+  print(f"Statistics for : {species}")
+  print(group.describe())
+  print("\n\n")
+
+percentiles = df.groupby('Species').quantile([0.25, 0.5, 0.75])
+print(percentiles)
+

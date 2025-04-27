@@ -1,0 +1,53 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+df= sns.load_dataset('titanic')
+df.head(10)
+df.describe()
+df.describe().transpose()
+from collections import Counter
+age_data = df['age'].dropna()
+
+sorted_age_data = sorted(age_data)
+n = len(sorted_age_data)
+
+# Calculate mean
+mean_age = sum(age_data) / len(age_data)
+
+# Calculate the median
+if n % 2 == 1:  # odd
+    median_age = sorted_age_data[n // 2]
+else:  # even
+    median_age = (sorted_age_data[n // 2 - 1] + sorted_age_data[n // 2]) / 2
+
+# Calculate mode
+age_counts = Counter(age_data)  # Count occurrences of each age
+mode_age = age_counts.most_common(1)[0][0]  # Get the most common value
+
+print(f"The mean age is: {mean_age}")
+print(f"The median age is: {median_age}")
+print(f"The mode age is: {mode_age}")
+plt.figure(figsize=(8,4))
+sns.boxplot(x="sex", y="age", hue="survived", data= df, palette="viridis")
+plt.title("Distribution of age with respect to each gender and Survival Status")
+plt.xlabel("Sex")
+plt.ylabel("Age")
+plt.show()
+
+plt.figure(figsize=(6,4))
+ax=sns.barplot(x='sex',y='age',data=df, palette='Set2', hue='survived')
+for i in ax.containers:
+    ax.bar_label(i)
+plt.show()
+
+vp=sns.violinplot(x='sex',y='age',data=df, hue= 'survived')
+
+ab=sns.stripplot(x='sex',y='age',data=df)
+
+ad=sns.countplot(x='sex',data=df, palette='Paired', hue='sex', legend=False)
+for i in ad.containers:
+  ad.bar_label(i)
+
+ad=sns.countplot(x='sex',data=df, palette='coolwarm', hue='survived')
+for i in ad.containers:
+  ad.bar_label(i)

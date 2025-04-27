@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+
+df = pd.read_csv(r'C:\Users\admin\Desktop\Iris.csv')
+
+
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+
+y_pred = model.predict(X_test)
+
+# Confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("Confusion Matrix:\n", cm)
+
+
+accuracy = accuracy_score(y_test, y_pred)
+error_rate = 1 - accuracy
+precision = precision_score(y_test, y_pred, average='macro')
+recall = recall_score(y_test, y_pred, average='macro')
+
+print(f"\nAccuracy: {accuracy:.4f}")
+print(f"Error Rate: {error_rate:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+
+
+def get_metrics(cm, idx):
+    TP = cm[idx, idx]
+    FP = cm[:, idx].sum() - TP
+    FN = cm[idx, :].sum() - TP
+    TN = cm.sum() - (TP + FP + FN)
+    return TP, FP, TN, FN
+
+print("\nTP, FP, TN, FN for each class:")
+for i, label in enumerate(y.unique()):
+    TP, FP, TN, FN = get_metrics(cm, i)
+    print(f"{label}: TP={TP}, FP={FP}, TN={TN}, FN={FN}")

@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix,precision_score,recall_score,accuracy_score
+
+df=pd.read_csv(r'C:\Users\admin\Desktop\Social_Network_Ads.csv')
+x=df[['Age','EstimatedSalary']]
+y=df['Purchased']
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=42)
+model=LogisticRegression()
+model.fit(x_train,y_train)
+y_pred=model.predict(x_test)
+
+cm=confusion_matrix(y_test,y_pred)
+print(f"Confusion matrix\n",cm)
+
+TP,FP,FN,TN=cm.ravel()
+print(f"True positive:{TP}")
+print(f"false negative:{FN}")
+print(f"false positive:{FP}")
+print(f"True negative:{TN}")
+
+accuracy=(TP+TN)/(TP+TN+FP+FN)
+error_rate=(FP+FN)/(TP+TN+FP+FN)
+precision=TP/(TP+FP)
+recall=TP/(TP+FN)
+
+print(f"\n\naccuracy:{accuracy:.2%}")
+print(f"error_rate:{error_rate:.2%}")
+print(f"precision:{precision:.2%}")
+print(f"recall:{recall:.2%}")
+
+
+plt.figure(figsize=(6,4))
+sns.heatmap(cm,annot=True,fmt='d',cmap='Blues',xticklabels=['predicted_yes','predicted_no'],yticklabels=['actual_yes','actual_no'])
+plt.title('Confusin matrix')
+plt.xlabel('predicted output')
+plt.ylabel('Actual output')
+plt.show()
+
+
+

@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder,MinMaxScaler
+from sklearn.datasets import load_iris
+# df=pd.read_csv(r'C:\Users\admin\Desktop\Iris.csv')
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['Species'] = [iris.target_names[i] for i in iris.target]
+print(df.head(6))
+print("\n\n STatistics for this dataset\n\n ",df.describe())
+
+print("\n\nMissing values checking",df.isnull().sum())
+
+print("datatype cheking",df.dtypes)
+df['Species']=df['Species'].astype('category')
+# df['Species']=df['Species'].cat.codes
+print(df.head(6))
+print("\n\n")
+print(df.tail(6))
+print("")
+
+print("after check datatype",df.dtypes)
+
+# scale=MinMaxScaler()
+# df[['SepalLengthCm' ,'SepalWidthCm',  'PetalLengthCm',  'PetalWidthCm']]=scale.fit_transform(df[['SepalLengthCm' ,'SepalWidthCm',  'PetalLengthCm',  'PetalWidthCm']])
+# print("\n\nafter scaling on 0-1")
+# print(df.head())
+scaler = MinMaxScaler()
+df[df.columns[:-1]] = scaler.fit_transform(df[df.columns[:-1]])
+print("\n\nafter scaling on 0-1")
+print(df)
+
+
+le=LabelEncoder()
+df['species_encoded']=le.fit_transform(df['Species'])
+print(df[['Species','species_encoded']].drop_duplicates())
+
+df['Species'].replace(['Setosa', 'Virginica'], [0,1], inplace=True)
+print(df)
+
+# df = df.rename(columns={'Species': 'Flower_Type'})
+# print(df.head())
+

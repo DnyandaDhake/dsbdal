@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score,mean_squared_error
+
+df=pd.read_csv(r'C:\Users\admin\Desktop\HousingData.csv')
+print("missing values")
+print(df.isnull().sum())
+df=df.fillna(df.median())
+print(df.isnull().sum())
+
+x=df.drop('MEDV',axis=1)
+y=df['MEDV']
+
+model=LinearRegression()
+model.fit(x,y)
+
+df['Predicted']=model.predict(x)
+
+accuracy=r2_score(y,df['Predicted'])
+print(f"Accuracy is :{accuracy:.2%}")
+
+mse=mean_squared_error(y,df['Predicted'])
+print(f"Menas squared error is:{mse}")
+
+print("samples")
+print(df[['MEDV','Predicted']].head(7))
+
+plt.figure(figsize=(10,5))
+plt.scatter(y,df['Predicted'],alpha=0.5,color='skyblue')
+plt.plot([y.min(),y.max()],[y.min(),y.max()],'r--',linewidth=2)
+plt.title('ACtual v sprdicted graph')
+plt.xlabel('actual price($1000s)')
+plt.ylabel('predict price($1000s)')
+plt.show()
+
+
+
+
+

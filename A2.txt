@@ -1,0 +1,68 @@
+!pip install pandas numpy seaborn matplotlib
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+data={
+    'student_id':[1,2,3,4,5,6,7,8,9,10],
+    'name':['jaya','maya','swati','priya','nitya','siya','radha','rambha','rutu','mansha'],
+    'age':[18,18,np.nan,19,18,20,np.nan,19,18,18],
+    'sci_marks':[68,60,60,57,99,45,98,66,99,45],
+    'math_marks':[78,83,69,80,98,67,98,56,76,56]
+}
+df=pd.DataFrame(data)
+print(df)
+print("mising values")
+print(df.isnull().sum())
+age_median=df['age'].median()
+df=df.assign(age=df['age'].fillna(age_median))
+print("mising values")
+print(df.isnull().sum())
+
+def handle_outlier(df,column):
+  Q1=df[column].quantile(0.25)
+  Q3=df[column].quantile(0.75)
+  IQR=Q3-Q1
+  lower_bound=Q1-1.5*IQR
+  upper_bound=Q3+1.5*IQR
+  return df.assign(**{
+      column:np.where(df[column]<lower_bound,lower_bound,np.where(df[column]>upper_bound,upper_bound,df[column]))
+  })
+
+for col in['age','math_marks','sci_marks']:
+  print(f"outlier for {col}")
+  Q1=df[col].quantile(0.25)
+  Q3=df[col].quantile(0.75)
+  IQR=Q3-Q1
+  lower_bound=Q1-1.5*IQR
+  upper_bound=Q3+1.5*IQR
+  print(f"IQR for [{lower_bound},{upper_bound}]")
+  df=handle_outlier(df,col)
+print(df)
+
+plt.figure(figsize=(12,5))
+plt.subplot(1,2,1)
+sns.histplot(df['sci_marks'],kde=True)
+plt.title("SCience marks before trasforation")
+
+df=df.assign(science_log=np.log(df['sci_marks']+1))
+
+plt.subplot(1,2,2)
+plt.title("SCience marks after trasforation")
+sns.histplot(df['science_log'],kde=True)
+plt.show()
+plt.tight_layout()
+
+print("skewd value")
+print(f"orignal trasformation:{df['sci_marks'].skew():.2f}")
+print(f"log trasformation:{df['science_log'].skew():.2f}")
+
+plt.figure(figsize=(10,4))
+sns.boxplot(data=df[['sci_marks','math_marks','age']])
+plt.title("box plot")
+plt.show()
+
+
+
+

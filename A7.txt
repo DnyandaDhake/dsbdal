@@ -1,0 +1,85 @@
+import pandas as pd
+import math
+from sklearn.feature_extraction.text import TfidfVectorizer
+doc_a="lila is good girl and she is studing engineerg in pune"
+doc_b="lila is 20 year old"
+bag_a=doc_a.split(" ")
+bag_b=doc_b.split(" ")
+uniquewords=set(bag_a).union(set(bag_b))
+numwordsA=dict.fromkeys(uniquewords,0)
+for word in bag_a:
+    numwordsA[word]+=1
+numwordsB=dict.fromkeys(uniquewords,0)
+for word in bag_b:
+    numwordsB[word]+=1
+
+print(numwordsA)
+print(numwordsB)
+def computetf(worddict,bagwords):
+    temp={}
+    bagcount=len(bagwords)
+    for word,count in worddict.items():
+        temp[word]=count/float(bagcount)
+    return temp
+tfa=computetf(numwordsA,bag_a)
+tfb=computetf(numwordsB,bag_b)
+print(tfa)
+print(tfb)
+
+
+def computeidf(documents):
+    N=len(documents)
+    idfdict={}
+    idfdict=dict.fromkeys(documents[0].keys(),0)
+    for doc in documents:
+        for word,val in doc.items():
+            if val>0:
+              idfdict[word]+=1
+
+    for word,val in idfdict.items():
+            idfdict[word]=N/float(val)
+    return idfdict
+idf1=computeidf([numwordsA,numwordsB])
+idf1
+
+
+
+!pip install nltk
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger_eng')
+nltk.download('wordnet')
+
+print("\n\n\n")
+from nltk.tokenize import word_tokenize,sent_tokenize
+
+sentence="Hppiness is not ready made. It cultivated by the choices we make,kindness we share with others and inner self."
+words=word_tokenize(sentence)
+print("word_tokenizatuion",words)
+print("sentence tokenizatio is ",sent_tokenize(sentence))
+
+from nltk.corpus import stopwords
+stop_words=stopwords.words('english')
+cleaned=[word for word in words  if word.lower() not in stop_words]
+print("cleaned versio is ", cleaned)
+
+from nltk import PorterStemmer
+ps=PorterStemmer()
+ewords=['writing','writes','gone','went','studying']
+for w in ewords:
+    root=ps.stem(w)
+    print("root word for",w,"is",root)
+
+
+from nltk import WordNetLemmatizer
+lemma=WordNetLemmatizer()
+print("\n")
+for w in ewords:
+    root=lemma.lemmatize(w,pos='v')
+    print("lemma for ",w,"is",root)
+    
+
+
+    
